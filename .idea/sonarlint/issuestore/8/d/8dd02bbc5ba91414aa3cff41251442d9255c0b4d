@@ -1,0 +1,17 @@
+
+{
+java:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(„½–ìÿÿÿÿÿ8‘Àœàõ1
+X	java:S125"<This block of commented-out lines of code should be removed.(ëúÿØ8šÀœàõ1
+L	java:S106$"+Replace this use of System.out by a logger.(ÙÙ¯¶ûÿÿÿÿ8¡Àœàõ1
+L	java:S106%"+Replace this use of System.out by a logger.(úµ°êÿÿÿÿÿ8±²žàõ1
+L	java:S106&"+Replace this use of System.out by a logger.(•õþäúÿÿÿÿ8²²žàõ1
+i
+java:S1128"LRemove this unused import 'org.apache.kafka.clients.producer.KafkaProducer'.(ªŒ»8¥Æïàõ1
+o
+java:S1128"MRemove this unused import 'org.apache.kafka.clients.producer.ProducerRecord'.(ä°«¡üÿÿÿÿ8¥Æïàõ1
+j
+java:S1128"MRemove this unused import 'org.apache.kafka.clients.producer.RecordMetadata'.(éìåê8¥Æïàõ1
+S
+java:S1128"1Remove this unused import 'java.util.Collection'.(¹ÉÐšùÿÿÿÿ8¥Æïàõ1
+Z
+java:S1128"8Remove this unused import 'java.util.concurrent.Future'.(á¬øíýÿÿÿÿ8¥Æïàõ1
