@@ -3,17 +3,12 @@ package org.example.order;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.example.order.serializer.OrderDeserializer;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
-import java.util.concurrent.Future;
 
 public class OrderConsumer {
 	public static void main(String[] args) {
@@ -36,6 +31,7 @@ public class OrderConsumer {
 			System.out.println("Customer Name:- "+ customerName);
 			System.out.println("Product Name:- "+ order.getProduct());
 			System.out.println("Quantity :- "+ order.getQuantity());
+			System.out.println("Partition :- " + consumerRecord.partition());
 
 		}
 		kafkaConsumer.close();

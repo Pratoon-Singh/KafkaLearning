@@ -2,8 +2,6 @@ package org.example.order;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-import java.util.concurrent.Future;
-
 public class OrderCallback implements org.apache.kafka.clients.producer.Callback {
 	@Override
 	public void onCompletion(RecordMetadata recordMetadata, Exception e) {

@@ -15,7 +15,7 @@ public class VIPpartioner implements Partitioner {
 	public int partition(String topic, Object o, byte[] bytes, Object o1, byte[] bytes1, Cluster cluster) {
 		List<PartitionInfo> partitionInfos = cluster.availablePartitionsForTopic(topic);
 		if(((String)o).equals("Pratoon")){
-			return 5;
+			return 7;
 		}
 		return Math.abs(Utils.murmur2(bytes))%partitionInfos.size()-1;
 

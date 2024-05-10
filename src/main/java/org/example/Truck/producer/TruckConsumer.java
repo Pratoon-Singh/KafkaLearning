@@ -4,7 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.example.Truck.producer.serializer.TruckDeserializer;
-import org.example.order.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,7 @@ public class TruckConsumer {
 			properties.setProperty("group.id","TruckGPS");
 
 		KafkaConsumer<Integer, TruckLocation> kafkaConsumer = new KafkaConsumer<>(properties);
-		kafkaConsumer.subscribe(Collections.singleton("TruckCSTracking"));
+		kafkaConsumer.subscribe(Collections.singleton("TruckCSPartion"));
 
 		ConsumerRecords<Integer, TruckLocation> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(40));
 		for (ConsumerRecord<Integer, TruckLocation> consumerRecord:consumerRecords){
@@ -33,9 +32,11 @@ public class TruckConsumer {
 
 			int id = consumerRecord.key();
 			TruckLocation truckLocation = consumerRecord.value();
+			System.out.println(truckLocation.toString());
 			System.out.println("ID :- "+ id);
 			System.out.println("Latitude :- "+ truckLocation.getLatitude());
 			System.out.println("Longitude :- "+ truckLocation.getLongitude());
+			System.out.println("Partioner :- "+ consumerRecord.partition());
 		}
 		kafkaConsumer.close();
 

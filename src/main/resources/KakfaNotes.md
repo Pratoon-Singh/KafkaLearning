@@ -600,8 +600,9 @@ delete.topic.enable=true
 
 To Start the kafka in windows the bin/windows in environment 
 Step 1 :- open cmd and start the zookeeper using zookeeper-server start <configfolder path>\zookeeper.properties
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 Step 2 :- open cmd and start the kaka using kafka-server start <configfolder path>\server.properties
-
+.\bin\windows\kafka-server-start.bat .\config\server.properties
 In addition to the command line tools for managing and administering the Kafka cluster, Kafka gives
 
 Five core APIs application programming interfaces officially in Java and Scala.
@@ -1406,5 +1407,2169 @@ This logic is coming into picture.
 And whatever it is returning in this case, it has returned the three.
 
 So it uses three.  
+
+
+In this and the next couple of lectures, you will learn a lot more about the producer configuration.
+
+To do that, go to the very first producer we have created,Com Bharat Kafka order Producer Package.
+
+Open up the order producer Double Click to maximize.
+
+These are the mandatory properties every producer needs, instead of hard coding them like this,
+
+we have started like this so that you will understand what those properties really are internally.
+
+But instead of hard coding them like this, we can use a producer config class that Kafka API gives us producer
+
+cornfig dot bootstrap for every property there is a constant defined here.
+
+Bootstrap under score servers underscore config.
+
+Every constant has an underscore config at the end of it.
+
+For the key serializer, we use producer config dot type in key.
+
+You see that key underscore serializer underscore class_ config.
+
+By now you can guess what it is for the value serializer producer config dot value underscore serializer
+
+underscore class underscore config.
+
+So this producer config is from the Kafka clients producer package.
+
+In the next couple of lectures you are going to learn a lot more properties that you can set on a producer
+
+and how they will affect the producer and the Broker .
+In this and the next lecture, you will learn a few more important properties that we can set on to
+
+the producer configuration, props dot set property producer config, dot acknowledge acks underscore
+
+config.
+
+This acknowledgement property.
+
+If you point the cursor, it is ACKS the string for this constant value.
+
+For this constant is ACKS and the value can be as zero or a one or all, only three values that
+
+are possible.
+
+This configuration controls how many partitions should receive the message before the producer considers
+
+it as a successful right or send.
+
+If we configure it to zero, the producer will send the message and immediately consider that the message
+
+is sent successfully.
+
+It won't wait for the response from the Broker
+
+If you configure it to one, that means the producer receives a successful response from the broker.
+
+Only if the leader replica successfully receives a message which is safe now that the producer will
+
+know that the message has been sent successfully.
+
+When you configure it to zero, if the producer doesn't care, if the message fails, whether the leader
+
+is down temporarily or for whatever reason, the message is lost.
+
+The last one, which is even more safer, is all.
+
+The producer receives acknowledgement from the broker only once all the replicas received the message.
+
+This is the safest but has more latency as the producer has to wait for the message to be delivered
+
+to all the replicas.
+
+Next, we have Buffer memory, Props dot set property producer, config dot buffer underscore, memory
+
+underscore.
+
+Config, the value for this can be in bytes.
+
+This is the buffer memory the producer will use to buffer the messages before they are sent to the
+
+broker.
+
+If the application is too fast in producing the messages and handing them over to our producer API,
+
+then the producers might block.
+
+If this memory is not big enough by default, it is 256 MB and you can configure any numeric value higher
+
+than that are lower than that if you want to.
+
+Next is the compression type prop start, set property producer config dot compression, underscore
+
+type, underscore config.
+
+By default, the messages that are sent are not compressed.
+
+Only if you set this configuration and provided a value.
+
+That is when the messages will be compressed.
+
+The values that are possible are snappy.
+
+Compression from Google gzip and also lz fuor So Snappy is from Google, it does a good job
+
+in utilizing CPU.
+
+It doesn't utilize CPU that much when it comes to the compression ratio itself.
+
+gzip is better than snappy.
+
+So if you want less CPU to be used, then go with snappy if you are okay with the CPU that is being
+
+used.
+
+But if you want to reduce the network bandwidth that is being used, then go with gzip because the
+
+compression ratio is higher and will save a lot of network bandwidth.
+
+Next is the retries, which is very important, props dot , set property producer Config dot retries
+
+underscore conflict.
+
+This is a No.
+
+Which when configure, the producer, will retry if there is some error that can be recovered, for
+
+example, if the leader has temporarily gone down, then the producer, if the message is not sent,
+
+it will retry again by default.
+
+The producer will wait for hundred milliseconds before each retry.
+
+So if you specify a value of zero, it will never retry.
+
+If you specify a value of one, it will retry only once and so on.
+
+If I say two the producer will wait by default for hundred milliseconds before it retry the first time
+
+and the second time.
+
+And we can control that hundred milliseconds by setting another property prop dot, set property
+
+producer config dot.
+
+Retry, see that back off in milliseconds, retry underscore back off under milliseconds config, this
+
+is where you can change that.
+
+Configuration, if you want it to wait for five hundred milliseconds, then you can configure that out if
+
+you want to it to wait for the producer to wait for a second.
+
+Then you can configure a thousand milliseconds so that it will wait for one second between each route,
+
+which is very high.
+
+Let's change it to maybe four hundred milliseconds.
+
+That's the retry and the retry back off in milliseconds, the producers won't retry if there is
+
+unrecoverable exception, like the messages to big error and the producer API automatically takes care
+
+of retry.
+
+So it'll be redundant if we write the retry logic on our own.
+
+We don't have to do that in the next lecture.
+
+We'll explore a few more important properties.
+
+That can send the message to the Broker.
+
+That's important to understand, but setting it to a very small size can be a problem because our batches
+
+now will be very small, decreasing the throughput.
+
+So the batch might have only two or three messages depending on how big our messages are.
+
+Remember, this number is in bite, so have a higher number always instead of a smaller number for batch
+
+size.
+
+Next, props, dot set, property producer, config dot Linger milliseconds.
+
+This is a property that compliments the batch size.
+
+Earlier, I said, when configuring the batch size, although you configure it to a higher value, the
+
+producer thread will hand over the message in the batch through a center thread as soon as the center thread is free
+
+is free and available to send a message to the broker.
+
+But you can control that by using this Linger milliseconds config.
+
+You configure millisecond value, for example.
+
+Two hundred milliseconds, then the producer will wait for two hundred milliseconds before it hands
+
+over the messages to the sender thread although it is available.
+
+Or even if it is available, so that gives us a chance to fill in this batch with a few more messages,
+
+increasing the throughput with this small latency so you can set this to a little higher number so that
+
+the producer will wait before it hands over this batch to the center thread and will have more messages
+
+going to the broker with a single shot.
+
+But this should be a string value.
+
+Not a integer
+
+Put that in double quotes
+
+And one last property is the timeout props dot set property, produce the config, dot request timeout
+
+MS.
+
+As the name itself says, this is that time in milliseconds for which the producer will wait for a response
+
+from the broker and it will timeout if a response doesn't come with in these and it will retry again.
+
+So these are all the important properties.
+
+There are a few more properties.
+
+You can always launch your browser search for Kafka producer configuration and that will take you to
+
+the confluent website or Apache.
+
+Either of those two are OK.
+
+Let me take you to the confluent website.
+
+There we go.
+
+Each property here is described in detail as an assignment.
+
+I want you to read this document to the full.
+
+## Mesage delivery and transcations
+So far, you have learnt different advanced configuration that you can use on a Kafka producer in the
+
+next few lectures you will learn how to achieve message delivery idempodency , there is no duplicate
+
+messages.
+
+Kafka producer API, along with the Broker, supports three different message delivery semantics.
+
+You will learn what those are.
+
+By default, it is at least once.
+
+But by the end of these lectures you will learn how to achieve adempodency
+
+That is no duplication of messages.
+
+We will understand the difference between these, how to configure them and the advantages and disadvantages.
+
+You will also learn how easy it is to use transactions within your producer in four simple steps that
+
+is sending all the messages are sending no messages at all, just like the JDBC transactions are going
+
+to use the Kafka producer API to enable transactions in your
+
+Producer.
+Idempotency means no duplication of messages .
+
+### Message Delhivery sematics 
+The Kafka producer API, along with the Kafka broker support Three message delivery semantics, the
+
+first is at least one delivery at most, once delivery.
+
+And finally, we have only one delivery.
+
+The only ones message delivery uses idem potency.
+
+There is no duplication of messages.
+
+Let's take a look at each one of these, the configuration that is required and also the advantages
+
+and disadvantages in at least one delivery.
+
+If the message is received by the broker once everybody is happy, that is, the producer sends a message,
+
+the broker takes it, writes it to all the partitions.
+
+If we have replications of partitions and once all the partitions, the leader, the followers receive
+
+the message, the broker treats it as committed, at which point it sends an acknowledgement back to
+
+the producer and everybody is happy.
+
+The message is delivered at least once.
+
+But the issue with at least once delivery happens, if the broker has written the message to all the
+
+partitions that it has committed the message.
+
+But when it is trying to send an acknowledgement to the producer, if the acknowledgement fails for
+
+some reason, the producer API will automatically retry to send the very same message resulting in message
+
+duplication.
+
+So if you are OK, to have message, duplication and reprocessing of the same message in the use case you
+
+are working with, then you can go with the default, which is at least once delivery.
+
+Otherwise you can use it most once delivery here.
+
+The message should be delivered at most once, not more than that.
+
+We do that using the retries configuration on the producer side will use the retry configuration and
+
+set it to zero.
+
+That is, the producer will never retry.
+
+It will send a message if the broker writes it to all the partitions, everybody is happy.
+
+But if it doesn't write, we have a issue because the producer won't retry and the message is lost.
+
+So in case of at most once delivery, since the producer doesn't retry, we have the issue of messages
+
+getting lost.
+
+If you are okay with messages getting lost, then you can go it at most once delivery by simply configuring.
+
+The retries to zero.
+
+The last and the most desired is exactly ones semantics.
+
+This is where we enable.
+
+Idem potency by using a producer configuration called an able item buttons, once we do that, once
+
+we set it to true, the magic happens behind the scenes.
+
+The producer send method will generate a unique sequence number for every message.
+
+So it's unique within a given partition the broker will receive it and the broker also does some magic,
+
+it will maintain the message sequence number and along with it, it will generate a unique producer, ID
+
+for each producer instance, which will be used by the producer in the message every time it sends a
+
+message.
+
+So the broker ensures that if a particular producer with a unique producer, ID is sending the same
+
+message again, because now it has a sequence number, per partition within a partition, there will
+
+be multiple sequence numbers.
+
+It will check that sequence number.
+
+And if it has already received a message with that sequence number within a given partition from a given
+
+producer with a unique ID, then it will reject that message.
+
+So here we can have all the retries and all that.
+
+And also at the same time, we are avoiding duplication thanks to this simple property enabled dot the
+
+idem potency
+
+Once we do that, a producer send method generates a unique sequence, number per partition within the partition
+
+for each message, and the broker maintains or gives a unique producer ID and this combination makes
+
+this very powerful.
+
+So if you want to use idem potency, simply go to your producer and use a new property props dot set
+
+property producer config.
+
+Dot.
+
+Idem potency .
+
+That guy, right, that enable idem potency.
+
+Set it to true by default, it is false.
+
+We have to set it to true, that's all that we need to do.
+
+All the magic will happen behind the scenes thanks to the send method on the producer and the Kafka Broker
+
+with generates producer ID per producer.
+
+So if multiple instances of the same producer send duplicate messages, then that doesn't work, that
+
+idempotency will fail.
+
+The broker works.
+
+Within a producer, ID are a producer instance, it can ensure that no duplicate messaging happens.
+
+But if we have multiple instances of producer running, they both will get unique producer id.
+
+And if they both send the same message, then the producer, that broker will not know still the duplication
+
+can happen.
+
+### Transaction
+A transaction on the Kafka producer is just like a database transaction where we commit all the records
+
+within the transaction or we roll back all or nothing atomicity, we achieve it by using the
+
+producer API, starting with init transactions method.
+
+This method initializes everything that is required for a transaction.
+
+Then you start a transaction using the producer dot begin transaction, you start sending messages and
+
+whenever you commit a transaction, all these messages within the transaction boundary from begin to
+
+commit transaction in between those two lines will be committed to all the partitions.
+
+If something goes wrong with one of the records being committed, everything will be rolled back, they
+
+will not be committed and the producer can retry.
+
+And if there is any exception, that exception will be raised.
+
+If something goes wrong when the commit happens and we handle it using abort transaction, you have to invoke
+
+producer dot abort transaction so that if there are any pending records that the producer is trying
+
+to send, it will stop sending them.
+
+we will learn all these methods in detail when you code this in the next lecture.
+
+In this lecture, you will learn how easy it is to use transactions in a kafka producer to do that,
+
+go to the com.bharath.kafka.orderproducer package, copy the very first producer, Class paste it
+
+on the same package, change the name to transactional order producer remove the two at the end hit
+
+OK, open up the transactional order producer.
+
+Delete all the unwanted properties here, leave the first three mandatory properties.
+
+Take out the rest of them, the very first step to start using Transaction's is to assign a unique transactional
+
+id, props dot, set property producer config dot transactional ID.
+
+is the property and the value can be any unique value, let's call it order Hyphen, producer hyphen
+
+one every instance.
+
+Of the producer that is starting a transaction or that has transactional code should have a unique
+
+id.
+
+Otherwise we will see exceptions if you try to run two instances of the very same producer class and
+
+if both instances use the same transaction lD, then you get a exception back.
+
+That's not possible.
+
+The second step is to initialize the transactions producer dot init transactions, once you create
+
+the producer object, the kafka producers init transactions will do a lot of things for us behind the scenes.
+
+Go to this documentation here.
+
+Let me copy the documentation and paste it in a text editor so that you can see it better.
+
+So this init method init transactions method should be invoked before you go ahead and start a transaction.
+
+That is what this first part says.
+
+If you try to start off a transaction without invoking this method, you will get a exception.
+
+This method does two things the first thing it ensures any transactions initiated by previous instances
+
+of the producer with the same transactional Id are completed.
+
+So it checks and ensures that if there are any producer instances that are already committing the transaction
+
+are already in the transaction, it will make sure that they are all completed.
+
+If previous instance had failed with a transaction in progress, it will be aborted.
+
+And if the last transaction has begin completion, but not at finished, this method waits for its completion.
+
+Secondly, it gets a producer ID, the broker maintains a unique producer, Id, along with the
+
+producer Id it will get the epoc time and these two will be internally used once we start a transaction
+
+and starts sending messages.
+
+This information, this producer id, and this epoc information will be sent along with every message.
+
+This information will be sent to the broker and the broker will track this entire transaction and make
+
+sure of the idempotency using this producer Id and epoc.
+
+So behind the scenes, there is so much happening.
+
+And one more note that this method will raise a timeout exception if the transaction state cannot
+
+be initialized before the expiration of this property.
+
+Max dot blog dot milliseconds.
+
+So here you can set a property called producer config, dot, max, dot block, underscore milliseconds
+
+config and pass in, say a thousand milliseconds, which is one second.
+
+This property is not only used for this init transactions method.
+
+Once you said this property your send method also will be affected.
+
+Your send method cannot block for more than a thousand milliseconds.
+
+Not only send your commit transaction abort transaction methods which you are going to use in a few seconds
+
+will also be impacted by this time.
+
+Max Block Ms config.
+
+I'm going to comment this out for now.
+
+Now we have initialized the transactions.
+
+We haven't started a transaction yet to start the transaction.
+
+Let's have multiple records.
+
+Copy this line where we are creating a record paste it call this record two.
+
+And change the key and value of this to iPhone.
+
+Or let's say dell laptop, because these is for our start up 20 Dell laptops and go to the tryblock producer
+
+dot send record to without a callback, I'll tell you why we don't need a call back when we are using
+
+Transaction's in the next few lectures.
+
+I'll explain why we don't need this so you can take out this call back from here or we'll take it out
+
+in the next few lectures.
+
+We haven't started a transaction yet, but we have multiple sends now and I want to wrap these two sends
+
+within one transaction.
+
+I want both of them to succeed or both of them should fail.
+
+Producer Dot begin transaction and at the end producer dot commit transaction.
+
+That is how we use it, just like the JDBC API if you have worked with it.
+
+And if there is an exception, there will be a
+
+If any exception happens, then we should invoke producer, dot abort transaction, so this method ensures
+
+that if we still have any messages between the producer API, if there are any messages that are to be yet
+
+be sent and when an exception happens, all that will be aborted and those messages will not be sent.
+
+Lets read the documentation for Begin transaction point.
+
+cursor is a very straightforward.
+
+Let me copy that guy.
+
+It simply starts a transaction.
+
+Go back right there, paste it should be called, before the start of every new transaction, note
+
+that prior to the first invocation of this method, you must invoke init transactions.
+
+I already mentioned that before we call begin transaction, you should have already invoked in it transactions.
+
+Once you invoke begin transaction, the producer, Id, etc, will be used and they should
+
+be ready.
+
+So the broker would have send back a unique producer id and the epoc and internally the producer API.
+
+when you say begin transaction.
+
+It will be sending that information for every send and the broker will keep track of the messages coming
+
+in, the idempotency the transaction management
+
+All that will be done point your cursor on the commit
+
+Go through that documentation as well.
+
+Real quick.
+
+Copy paste it commits, the ongoing transaction, this method will flush any unset records before actually
+
+committing the transaction.
+
+So if the producer still has some more records that are being buffered or batched yet to be sent, this method will
+
+ensure that those are sent and then the transaction will be committed further.
+
+If any of the send calls, which were part of the transaction, hit irrecoverable errors, this method
+
+will throw the last received exception, immediately, and the transaction will not be committed.
+
+That is when we handle that exception and invoke the abort transaction to stop any future messages that
+
+are being batched from being sent.
+
+the abort does that for us
+
+It will stop all the future messages that are being sent and none of the messages will be sent.
+
+So you can read the rest of the documentation on your own.
+
+It's just about the time out property which I have already mentioned.
+
+The max block milliseconds.
+
+It affects the way these methods work as well.
+
+The commit transaction and the abort transaction cannot block beyond this millisecond time frame once you set
+
+it.
+
+So that is how you use transactions in four simple steps.
+
+First, you assign a unique transaction id for the instance of your producer, then you invoke any transactions,
+
+then begin commit
+
+And if there are exceptions, you go with the fifth step, which is aborting the transaction.
+
+In this lecture, i will leave you with a few important points about transactions, the same producer
+
+instance cannot have multiple transactions open at the same time that it has to close or commit a transaction
+
+before it starts
+
+Another transaction, the commit transaction method, flushes, any unsent records before the commit happens
+
+And if there are any errors that happened during the commit, it will throw a exception.
+
+That is the reason we don't need to have this call back here so you can get rid of this call back while
+
+working with Transaction's, because all we do in this call back is handling an exception.
+
+If there is an exception in case of aSynchronos calls when you are using transaction's having a call
+
+back doesn't make any sense because if there are exceptions, that exception will be thrown and we catch
+
+it invoke the abort transaction method.
+
+So when a failure happens, we invoke the abort transaction to reset everything.
+
+And again, the producer can start from the beginning.
+
+The producers in Kafka are threads that is we can invoke the send method from multiple threads,
+
+but we have to make sure that we start the transaction before any of those threads starts and we commit
+
+the transaction after all the threads finished.
+
+So it is our responsibility to ensure that.
+
+**Which of the following is the default message delivery semantic used by Kafka ans :- Atleast once delivery
+*Which of the following method should be invoked before calling the beginTransaction ans :- intiTransaction
+A producer instance can not open multiple transactions  at the same time
+
+
+###ConsumerGroup
+In this lecture, we'll revisit the concept of consumer groups and learn a few more details about them.
+
+Let's say we are working on a hospital management suit of applications.
+
+We have a patient check out application billing and housekeeping applications.
+
+The patient check application publishes a record to a kafka broker every time a patient checks out and
+
+the billing and housekeeping applications will read, those records processed them using their own business
+
+logic and do whatever they are supposed to do.
+
+If the patient check out application keeps publishing a lot of records, it will increase the load on
+
+our consumer applications and they might crash at some point if they can't handle the load.
+
+That is where consumer groups come in.
+
+Consumer groups are a group of consumers that can read from the same topic, but different partitions
+
+in the topic.
+
+The power of Kafka comes from its scaling abilities.
+
+A topic is broken down into multiple partitions.
+
+And then we can have a consumer group with one or more consumers that can consume from the partitions
+
+of that topic.
+
+If a group has only one consumer and we have four partitions, then the single consumer is responsible
+
+for consuming the records from all the partitions.
+
+But we can easily scale our consumer group up.
+
+As the load increases, we can bump up the consumer group and add one more consumer.
+
+Now we have two consumers, so these two consumers will split the partitions among themselves, the
+
+first consumer consumes from the first two partitions and the second consumer consumes from the third
+
+and fourth.
+
+Now, if they load even increases, then we can add one more.
+
+Now we have three consumers, the first two take off, the first two partitions and the last one can
+
+take care of the last two partition.
+
+Similarly, we can have four consumers where each consumer is responsible for consuming one partition
+
+if we have more consumers than the number of partitions we have, then those consumers might hang.
+
+Ideal, they will not do anything.
+
+So it is our responsibility to ensure that we create enough partitions to keep our consumers in the
+
+group
+
+busy consumer groups not only allow us to scale and take care of the load that is coming in from the
+
+producers.
+
+But using consumer groups, multiple applications can consume from the same topic.
+
+And have their own copies of data.
+
+So here we have two consumer groups, one for the billing application and one for the housekeeping application,
+
+and they can consume all the data from the same topic.
+
+They will get all the data.
+
+It's not like the billing application will get some records and the housekeeping will get some records.
+
+They will get a copy of all the records.
+
+Each one of them will get their own copy and they can do load balancing through consumer group of their
+
+own.
+
+## Consumer Group  Rebalancing
+
+In this lecture, we will define what consumer group rebalancing is, and in the next lecture you will
+
+see how it works.
+
+Let's say we have a topic that is divided into four partitions and a consumer group that has three consumers
+
+consuming from these four partitions.
+
+If a new consumer is added to this consumer group, the new consumer will start reading from the partitions
+
+that were previously consumed by the other consumers in the group.
+
+Secondly, if one of the consumer goes down, whether it has gracefully shut down or whether it has
+
+crashed, the partitions it has left out will have to be taken care of by the other consumers in the
+
+consumer group, moving partition ownership from one consumer to another
+
+Consumer in the group is called consumer group rebalancing.
+
+I repeat that whenever a consumer is added to the consumer group or a consumer leaves the consumer group
+
+moving partition ownership's from one consumer to another consumer is called rebalancing.
+
+Rebalancing is the key for high availability and scalability of Kafka.
+
+At the same time, we don't desire it all the time because whenever a rebalance happens, all the consumers
+
+in the consumer group will go silent.
+
+The consumer group will not do anything when the rebalancing is happening.
+
+We will learn how it works in the next lecture.
+
+To understand the magic behind rebalancing, we need to understand how consumer groups work when a new
+
+consumer group is created.
+
+Kafka allocates one of the brokers as the consumer group coordinator.
+
+When a new consumer joins the consumer group, it does so by sending a joint request to the group coordinator.
+
+The group coordinator at this point will send all the partition details to this very first consumer and
+
+makes it a consumer group leader.
+
+When another consumer joins the group by sending in a joint request, the group coordinator will trigger
+
+a rebalance.
+
+While doing that, it will hand over the current partition details and also the consumer details to
+
+the group leader who does the rebalancing.
+
+It is not the group co-ordinator.
+
+It is the group leader, which is another consumer who does the rebalancing thanks to the kafka consumer API.
+
+All that logic is already in built.
+
+The leader does the rebalancing.
+
+It will reassign all the partitions to the list of consumers that are available in the group and hands
+
+over that list to the group coordinator.
+
+The group coordinator will then send the individual partition allocation to the other consumers.
+
+Only the group co-ordinator and the leader will have the entire list of consumers and the partition
+
+allocation and the other consumers in the group will get only their partition allocation information and
+
+another consumer joins the group.
+
+The same process will be repeated.
+
+It sends a request to the group co-ordinator.
+
+The group co-ordinator triggers the rebalance the leader
+
+Does the rebalancing hands that information to the group coordinator, which will hand the partition
+
+allocation to all the consumers.
+
+Even when a consumer leaves the group either gracefully or whether it has crashed, the same rebalancing
+
+will happen.
+
+How does the group coordinator know about the consumer health
+
+And the consumers are responsible for sending a heartbeat as long as they are sending a heartbeat.
+
+The group co-ordinator considers them to be alive if they wont for a certain amount of time, which
+
+we can configure.
+
+It considers them as debt and it will trigger rebalance.
+
+And consumers can also gracefully leave the group by sending in a leave request when they close
+
+off.
+
+That will send a leave request to the group co-ordinator and it triggers a rebalance.
+
+That is how rebalancing works.
+
+But we should always remember when the rebalance process happens, the consumer group does nothing because
+
+the group leader is assigning reassigning all the partitions to all the available, newly available
+
+consumers.
+
+The consumers will sit idle, so we need to ensure that we minimise rebalancing and if possible, avoid
+
+it, which you will learn in lectures later on.
+
+It allows the consumer API to do it.
+
+The consumers can commit the offsets they have already processed to a special topic called Underscore,
+
+Underscore, Consumer Underscore offsets
+
+This is a inbuilt topic that comes with Kafka, and when a consumer has processed the messages as it is set up to offset
+
+six, it will commit that information to this topic.
+
+At this point, if a rebalancing happens, the new consumer that is assigned to this position will look
+
+at this special topic for the information about which offset the previous consumer has processed up
+
+to which offset the previous consumer has processed, and it will start consuming from the next offset.
+
+But we have two issues that we need to be aware of.
+
+The first issue is duplicate processing.
+
+Let's say we have a consumer that has processed a partition up to record six and it has committed this
+
+information.
+
+It won't stop that.
+
+It will invoke the pole method and it will process the next set of records.
+
+And it has reached offset nine.
+
+So it has processed all the way to offset nine, but it has not committed it at this point.
+
+If rebalancing is to triggered, the new consumer that comes in will know that the previous consumer
+
+has committed up to offset six and it will start processing from offset seven all the way to the end
+
+of the partition, resulting in duplicate processing.
+
+That is one issue.
+
+Secondly, missing processing completely.
+
+It could happen if the consumer has overcommitted, it is overconfident, it has received an offset
+
+from the pole method and it has committed all the way, let's say, to offset 10, but it has only processed
+
+up to offset two.
+
+And if a rebalance happens at this point, the new consumer that comes in thinks that the previous consumer
+
+has processed all the way to Record ten or offset ten, and it will only process starting offset eleven.
+
+This is the problem of
+
+Overcommitting and we will miss some records here committed but not processed, these records here will
+
+never be processed.
+
+So we need to be aware of those issues.
+
+And in the next few lectures, we will learn how to use Autocommit, which is already there when you start
+
+consuming the messages, how to do manual comit using synchronous and asynchronous way and also how
+
+to commit a specific offset.
+
+So we are going to do all this and we will learn how to minimize these problems.
+
+You have seen here.
+
+## Auto  Commit
+In this lecture, you will understand how the auto commit works and the issue with it, to do that,
+
+go to the order consumer projects customer de serializes package, open up the order consumer.
+
+By default, auto commits are enabled, if you want to disable it, you can set up property, props dot
+
+set property.
+
+Within the double quotes enable dot auto, dot commit, passin a value of false by default, this
+
+is true.
+
+If you set it to false, auto commits will be turned off.
+
+We'll do that in lectures later on when we use Manual commits.
+
+But now get rid of that property hit control d.
+
+The default time interval within which the auto commit happens is every five seconds.
+
+That doesn't mean that automatically the offset or the records will be committed every five seconds.
+
+The Poll method is the one which drives it, when the Poll method is invoked for the very first time.
+
+It will fetch a offset and it will also start at timer for the auto commit.
+
+The records will be processed the next time the poll is invoked.
+
+The poll will check if the default five seconds have elapsed.
+
+Only if the five seconds have elapsed, it will commit the previous offset if the five seconds have
+
+not elapsed.
+
+Let's say it said that the three second point or four second point, it will fetch the next offset of records
+
+and the consumer will process them.
+
+And the next time the poll is invoked, if the timer has gone beyond the five second mark, let's say
+
+it has gone to six, seven, eight seconds, it will commit both the previous offsets and the timer
+
+will be set to zero again.
+
+The timer will start from zero.
+
+It will go all the way to five seconds.
+
+That understanding is important, although the default value is five seconds.
+
+It is the poll method which drives it for us.
+
+And you can change that time.
+
+## Sync Commit
+When we use the auto to commit the poll method, will do the commit for the offsets based on a time
+
+interval, but to gain more control on when the offsets are committed.
+
+We can start by commenting out the auto commit configuration and by setting a property. props dot set
+
+property within the double quotes auto dot commit dot offset to false.
+
+I don't want the offsets to be committed automatically.
+
+That is what this property tells Kafka.
+
+Once we have that, we can use the consumer dot
+
+commit methods where we want.
+
+Typically, the poll method returns as an offset of records.
+
+We process them.
+
+The processing logic can vary from
+
+System to system our application to application, it could be storing the process data to the database
+
+or based on what our logic we have finish the processing once the processing is complete, the consumer
+
+dot commit.
+
+There are two methods, sync and async you can commit.
+
+Let's use the sync method for now.
+
+In the next lecture will explore the async method so Commit Sync will commit the entire current offset.
+
+So we have to ensure that all the records are processed before we invoke the commit sync method.
+
+The commit sync method is intelligent enough to do retries when it tries to commit.
+
+If there are any exceptions, it will retry to commit again unless it is unrecoverable exception.
+
+And coming to the rebalancing problem which we had, we still have the rebalancing problem here because
+
+let's say we have thousand records that are returned in the offset when we invoke the Poll method and
+
+400 or 500 records are processed.
+
+And at that point, if the rebalancing happens, whichever consumer picks up this offset after the rebalancing,
+
+it will still reprocess those records starting from the beginning of the offset all the way to whatever
+
+were processed earlier.
+
+Still, we have the duplication problem will solve it eventually or will minimize it eventually.
+
+But now we have more control on committing the offset.
+
+Here we are ensuring that we commit offset right away as soon as it is processed and not after a certain
+
+time frame.
+
+## Commit Async
+
+The commit sync method blocks the consumer application until the broker responds back to that commit
+
+request degrading the performance of our application.
+
+That is where we can use Commit async instead.
+
+Commit async, commit async will not block.
+
+The current offset will be sent for a commit to the Broker and the next pole will happen.
+
+The next offset will be retrieved and that will be processed while the commit is still in progress
+
+for the previous offset asynchronously.
+
+But with great power comes some challenges.
+
+This Commit async method won't retry if a commit fails.
+
+Fails for some reason, the commit sync used to retry, but the commit async won't retry.
+
+There is a reason for it which you need to understand.
+
+Let's say when the pole is invoked for the very first time, we have received a offset with records
+
+from one to thousand.
+
+And those records are successfully processed as per our business needs and the commit async method is invoked.
+
+Since it is asynchronous, this batch will be sent for a commit and the pole will be invoked.
+
+It won't block, so the pole will be invoked, which will give the next set of records the next offset,
+
+which will also be processed successfully.
+
+But if the previous commit has failed for some reason, let's say that Broker was temporarily down
+
+or for some reason if the previous commit has failed.
+
+In the meantime, the next offset was successfully processed, let's say from one thousand one to two
+
+thousand, and it was committed using the commit
+
+async now the Broker is up.
+
+It has successfully committed these records.
+
+If the commit async retries to commit this batch or this offset, and if it succeeds, the order will
+
+now be jumbled.
+
+Depending on when the commit async retries, this order can be jumbled up.
+
+And if a rebalance happens at this point, whichever consumer comes back up, it will look at this last
+
+entry and it will reprocess all the entries after that.
+
+So it will end up in duplicate processing.
+
+That is the reason retries are not supported in Commit async.
+
+So you need to understand that flow or problem.
+
+commit async also gives us a call back that we can invoke or listen to, so that callback is new off set,
+
+commit call back new offset commit call back.
+
+Let's implement Anonymous.
+
+Implementation of it, it has on complete method whenever the commit finishes, this call back
+
+will be invoked and we can take appropriate action if we want to do a retry here
+
+you are welcome to do it, but you already know what the problem can be.
+
+So this guy receives the offsets that were processed.
+
+And if there is any exception, we get that exception information as well.
+
+So you can check if exception
+
+Is not equal to null.
+
+That means there is exception that happened during the commit you can either log it or if you want to
+
+reprocess, you can reprocess.
+
+But in most cases, we simply log a commit
+
+failed for offset.
+
+Plus, the offsets we have received just log that, and also you can log the exception if you want
+
+to.
+
+If you don't want to use the time, seconds, you can five seconds.
+
+You can set a property props dot set property auto dot commit dot interval dot ms in milliseconds.
+
+pass in a string value for example
+
+If you pass in five hundred that means half a second.
+
+If you pass in seven thousand, that means it is seven seconds.
+
+One other important point to remember, just like the poll method, the closed method also does a commit.
+
+So we have to ensure that whatever records we have, they are all processed before the close is being
+
+invoked.
+
+The problem with auto commit comes with rebalancing.
+
+Let's say we have a offset of thousand records and we are going with their default auto commit time of five seconds.
+
+And let's say two seconds have elapsed and we have reached the four hundred record.
+
+The consumer has consumed one, two, four hundred records at this point.
+
+If a rebalance happens, whenever a rebalance happens, all the consumers will start consuming from
+
+the latest offset and these one, two, 400 records
+
+Since they are not committed, they will be consumed again and they will be processed again.
+
+So duplicate processing will happen.
+
+If you want to reduce that, we can reduce the value of the auto commit so we can configure a lower value
+
+like five hundred milliseconds, two seconds, etc. But the problem is not completely gone.
+
+##Sync Commit
+When we use the auto to commit the poll method, will do the commit for the offsets based on a time
+
+interval, but to gain more control on when the offsets are committed.
+
+We can start by commenting out the auto commit configuration and by setting a property. props dot set
+
+property within the double quotes auto dot commit dot offset to false.
+
+I don't want the offsets to be committed automatically.
+
+That is what this property tells Kafka.
+
+Once we have that, we can use the consumer dot
+
+commit methods where we want.
+
+Typically, the poll method returns as an offset of records.
+
+We process them.
+
+The processing logic can vary from
+
+System to system our application to application, it could be storing the process data to the database
+
+or based on what our logic we have finish the processing once the processing is complete, the consumer
+
+dot commit.
+
+There are two methods, sync and async you can commit.
+
+Let's use the sync method for now.
+
+In the next lecture will explore the async method so Commit Sync will commit the entire current offset.
+
+So we have to ensure that all the records are processed before we invoke the commit sync method.
+
+The commit sync method is intelligent enough to do retries when it tries to commit.
+
+If there are any exceptions, it will retry to commit again unless it is unrecoverable exception.
+
+And coming to the rebalancing problem which we had, we still have the rebalancing problem here because
+
+let's say we have thousand records that are returned in the offset when we invoke the Poll method and
+
+400 or 500 records are processed.
+
+And at that point, if the rebalancing happens, whichever consumer picks up this offset after the rebalancing,
+
+it will still reprocess those records starting from the beginning of the offset all the way to whatever
+
+were processed earlier.
+
+Still, we have the duplication problem will solve it eventually or will minimize it eventually.
+
+But now we have more control on committing the offset.
+
+Here we are ensuring that we commit offset right away as soon as it is processed and not after a certain
+
+time frame.
+
+## Commit Custom Offset
+The commit sync and async methods by default will commit the entire offset that was returned by the previous
+
+poll method, one disadvantage of that is that we have to wait for all the records in the offset to
+
+be processed and then we invoke the commit.
+
+If a rebalance happens in between processing of those records, then the next consumer, which takes up
+
+this partition, will start consuming the messages again from the beginning of the previous offset,
+
+because we haven't committed it at all.
+
+By doing a custom commit, by taking things into our own hands, we can avoid that by doing more frequent
+
+commits.
+
+It's super simple to do that.
+
+Both the commit sync and async methods allow us to do that.
+
+There are overloaded versions.
+
+I'm going to use async one.
+
+Cut this paste it inside the for loop.
+
+I want the commit to happen for every 10 records that are processed.
+
+We can change it and add whatever logic we want in our application.
+
+Int count is equal to zero and inside the for loop, if count percentage ten double equals zero for
+
+every ten records.
+
+I want this call to happen.
+
+The commit call to happen.
+
+And when that happens, we have to provide a offset right here, the async method not only takes
+
+a call back, it also takes an additional parameter.
+
+If you hit control space, you can see the overloaded versions.
+
+This is the guy which we are using right now with a call back.
+
+We can use this guy, which takes a map off topic partition, the key in this map is a topic partition
+
+and the value is offset and metadata, we tell it which topics which partition and to which offset up
+
+to which offset we want to commit.
+
+Let's use that.
+
+We can easily create this map.
+
+Let me get rid of that.
+
+The second parameter we know is a callback.
+
+The first parameter is a map.
+
+So let's use collections, dot singleton map add a comma for the callback, which is the second parameter.
+
+The key is a new topic, partition, object topic, partition, the topic, information, we can get
+
+it from the record record
+
+dot partition.
+
+Sorry, record.
+
+dot topic.
+
+The second parameter to the topic, partition constructor is the partition record dot partition will
+
+give us the partition information and the value is the offset which we want to commit new offset and
+
+metadata if there is any metadata optionally we can pass in that metadata.
+
+Right now we don't.
+
+We only care about the offset information.
+
+How do we get the offset, the current record being processed, dot offset plus one
+
+Because when the next consumer takes up the partition, we want it to start from the next record.
+
+That's the reason we always add a one that the current record is already processed plus one.
+
+So that is how we can commit a specific offset if we want to.
+
+And don't forget to increment count.
+
+Otherwise, it will never start incrementing right here before the for loop ends.
+
+We can do a count plus plus so that for every ten records, it will do a commit now and it will give the topic
+
+partition information or it'll pass the topic and partition information and the offset which we want
+
+to commit.
+
+Let me take that to new line so that you can see it.
+
+Here is the offset information up to whichever record we have processed, plus one we are committing
+
+more frequently.
+
+So even if a rebalance happens, the next consumer that comes up will pick from this point instead of
+
+waiting for the entire offset to be committed.
+
+## Create a Rebalance Listner
+So far, you have learned how to use offset commits to minimize the risk when a rebalance happens
+
+in this and the next lecture, you will learn how to use consumer rebalance listeners to take it a step
+
+further.
+
+The consumer rebalance Listner is a special class with method, and those methods will be invoked when
+
+a rebalance happens, the super simple to use it.
+
+This consumer dot subscribe method takes a topic.
+
+And also there are overloaded versions that take a consumer rebalanced listener as a second parameter
+
+to create a consumer rebalance listner
+
+we are going to create inner class right here once the consumer is created before the subscriber
+
+method is invoked, subscribe method is invoked.
+
+Create a class call it
+
+Re balance handler this guy should implement the consumer implements
+
+The consumer rebalance listener interface hit control one, and this interface has two methods that
+
+we need to provide implementation for control d to delete those, we are going to implement this first
+
+method in the next lecture.
+
+As the name itself says, the first method is on.
+
+Partitions revoked.
+
+So this method will be invoked whenever the rebalancing is triggered and before the partitions are being
+
+revoked from this particular consumer.
+
+So if there is any clean up left out on the consumer side and also if there are any records, the offsets of
+
+which are not committed yet, this is a great place to commit those offsets.
+
+This is our last chance before the consumer loses the partitions completely.
+
+And then this method will be invoked when the partitions are being assigned.
+
+So on partitions assigned, once the new partitions are assigned, if we want to take any action, this
+
+is where you can do that.
+
+And you will pass the instance of this to the subscribe method, that is how the consumer will know about
+
+this rebalance listener.
+
+So right here, whenever we are subscribing new rebalance and that's it, it's that simple to use a
+
+rebalanced handler will implement some logic.
+
+Where will be committing the left over records, or off sets right in this mathod will do that in the
+
+next lecture
+
+## Commit last offset processed
+
+This lecture will commit any offsets that are processed but are yet to be committed in our rebalance
+
+handler right here on the partitions revoke before the partitions are revoked.
+
+You can use consumer dot commit either sync or async lets commit, sync which is simpler commits sync and
+
+we need to pass it, the partitions, the offsets that we want to commit.
+
+So we need access to the offset information here as the consumer is processing the records, we need
+
+to keep track of which records are processed but are yet to be committed.
+
+And to do that start by extracting this collection dot singleton map the very first parameter which
+
+we pass to the commit async.
+
+Hit control one, once you select it all the way to the end of that parameter, extract to a local variable,
+
+call it current offsets, you will see what it is and why we are calling it current offsets.
+
+Copy.
+
+The left hand side of it all the way to the equal to copy it, go up top.
+
+Before even the consumer is created this is the state we are going to maintain as the records are processed,
+
+this map will have the latest partition and offset information.
+
+So here you simply create a new hash map and as the records are processed, go down.
+
+Instead of creating a new hash map, we will.
+
+First, cut this out on the left side, we don't have to do the collections dot singleton map and
+
+all that, get rid of all that we do a
+
+current offsets dot put.
+
+So this map will be continuously updated with the topic, partition information and offset metadata.
+
+cut this line and put it outside this if.
+
+So as the records are processed, we'll be storing that information in this map, so this map will always
+
+have the latest offset that is processed.
+
+Here this logic is fine.
+
+If count percentage ten is zero, then we are committing even
+
+If you don't have this logic, if you invoke the commit method outside this for loop, it will only commit once the
+
+entire offset is processed.
+
+But we are ensuring that as the processing is happening and before the commit happens, if a rebalance is triggered,
+
+we still have the last record information that was processed.
+
+Now we can use this current offset information right here in this commit sync.
+
+So you simply take this current offset pass it to this commit sync method and when the rebalance is trigger.
+
+This method will be invoked and we at least commit the last record that was processed, so we minimize
+
+the risk that is there with rebalancing of not committing the record.
+
+So that is how you can use a rebalanced listener by implementing the consumer rebalance listener interface
+
+and using the on partition invoke method and committing the records.
+
+
+## Using ConsumerConfig Class
+In this and the next few lectures, we'll be learning a little more about the consumer configuration.
+
+To do that, go to the very first consumer we have created, which is under the consumer project, com
+
+Bharath Kafka order consumer, open up the class.
+
+Right now, we have only the mandatory properties that are set first, let's get rid of these hard coded
+
+values, just like the producer config.
+
+On the producer side, we have a class called consumer config that has all the constants consumer config,
+
+dot, bootstrap servers, config.
+
+Similarly for the key deserializer, it's consumer config dot key deserializer class.
+
+Next is the value deserializer consumer config dot value deserializer class.
+
+Same for group ID consumer config dot group Id Config.
+
+In the next few lectures you're going to learn a lot more important properties that we can configure
+
+on the consumer and how they affect the consumer broker
+
+And so on.
+
+## Min fetch Size and Timeouts
+In this lecture, you will learn four important properties that we can configure on the consumer props
+
+dot set property, consumer config dot fetch underscore Min.
+
+Underscore bytes, underscore config is the very first one, this property tells the Kafka broker to wait
+
+until it has so much of data to be sent.
+
+For example, if you configure it to one zero two four, it has to have those many number of bytes before
+
+it can send the data to the consumer.
+
+By default, it is one mb.
+
+The higher the number, the better it is because the consumer and the broker don't have to go back and
+
+forth to exchange the data.
+
+And the consumer can keep working on this data.
+
+Next, we have the fetch max weight in milliseconds set property, consumer config dot fetch
+
+max weight in milliseconds by default.
+
+This is five hundred milliseconds.
+
+If you configure it to 200, Kafka broker will wait for two hundred milliseconds before it sends the data.
+
+The way it works.
+
+If we have both of these configured, kafka broker will check if this memory is reached already.
+
+If it has so much load, it will automatically send all the messages.
+
+Whichever comes first, the two hundred milliseconds come first, even before this memory is filled
+
+in with the messages, then it will send all the messages to the consumer.
+
+Next is the heartbeat interval in milliseconds, props dot set property, consumer config dot
+
+heartbeat interval in milliseconds.
+
+This is the value in milliseconds.
+
+Say a thousand milliseconds.
+
+For every thousand milliseconds, the consumer has to send a heartbeat to the coordinator, the consumer
+
+group coordinator.
+
+That is what this value is telling.
+
+There is another value that is complemented by this set property, consumer config dot
+
+Session time out and consumer conflict dot session timeout in milliseconds again, this is in milliseconds,
+
+say three thousand milliseconds or three seconds.
+
+This property tells the broker for how long the consumer can go without sending the heartbeat information.
+
+So when you configure this heart beat Interval, we are seeing consumer go ahead and send the heartbeat
+
+every thousand seconds.
+
+But it might skip if the load is too much, for whatever reason, it went down and it came back, it
+
+could not send the heartbeat.
+
+That is OK.
+
+But if it doesn't send the heartbeat for three seconds, then the consumer will consider this as dead
+
+and coordinator the consumer group coordinator, will trigger a rebalance and a good practice and a
+
+recommended practice is that the heartbeat interval usually should be one third of this session timeout
+
+configuration.
+
+
+## Four More properties of Consumer
+In this lecture, you will learn four more consumer properties, props dot set property, consumer
+
+conflict, dot max partition fetch bytes by default.
+
+This is one mb in bytes
+
+This value controls the maximum number of bytes the server returns to the consumer and the default is
+
+one mb.
+
+And if we go with the default and if we have 30 partitions and five consumers consuming from these partitions,
+
+then each consumer gets six partitions.
+
+So we have to ensure that each consumer has at least six MB space, but it is usually recommended that
+
+we give it more space because if one of the consumer goes down, the other consumers need to handle
+
+its partitions as well.
+
+So the max partition fetch bytes controls how many bytes of data per partition.
+
+The server returns the server or the broker returns to the consumer.
+
+Next props dot set property
+
+Consumer config dot auto offset reset.
+
+auto offset reset is a value that controls the consumer behaviour if it starts reading a partition that
+
+doesn't have a committed offset.
+
+We have two values that we can pass here within the double quotes
+
+Latest is the first one.
+
+If we set this too latest is the consumer will start reading those records, which came to the partition.
+
+After the consumer has started running the latest records, it will ignore the previous records which
+
+were there before the consumer has started running.
+
+The second value we can set is the earliest.
+
+If we set it to this, the consumer will start reading from the beginning of the partition.
+
+It will process all the records from the beginning of the partition next is the
+
+The client ID consumer config dot client.
+
+Client.
+
+Id config this can be used both on consumers and producers, and it can be any unique string value
+
+order consumer any unique string value, and it'll be used by the broker for logging metrics and quota
+
+allocation purposes.
+
+Next, props dot set property.
+
+Consumer config dot max underscore poll underscore Records config.
+
+This is the maximum number of records the Poll method can return, this controls the amount of data
+
+our application will need to process in the polling loop.
+
+So you can specify exactly the number of records each poll should return and the broker will return
+
+those many number of records.
+
+And our consumer will have to take care of those records in the polling loop every time the poll is called
+
+These are the number of records that will be returned.
+
+## Partion Assignor Strategy
+In this lecture, we learn about another useful property, which is partition assignment strategy props
+
+dot set property, consumer config, dot partition assignment strategy.
+
+here we can configure a class when you have learned about the partition assignments and consumer groups,
+
+you have learned that internally the Partition assigner is responsible for assigning partitions to consumers
+
+in the group. There are two partition assigners range
+
+assigner is the first one dot Class dot get name.
+
+And the second one is the round robin assigner, so the default is the range assigner, and if you want
+
+to configure round robin assigner, you are welcome to do that as well.
+
+Let's see the differences when we use a range assigner
+
+Let's say we have two topics with three partitions each and two consumers in the consumer group.
+
+If the range assigner is used, which is the default, it will take the consecutive
+
+subset of partitions from each topic and assigns them to the consumer.
+
+That is a consumer.
+
+One will get the two
+
+consecutive partitions in topic one, first p zero and P one, and then it also gets the consecutive partitions
+
+from topic two and then it starts assigning the second consumer the only left out.
+
+Consecutive partitions p two from first topic and p two from second topic so it never equally divides them.
+
+The first consumer ends up getting more partitions than the second consumer.
+
+We can configure the Round-Robin assigner, in which case it will go in a round robin fashion.
+
+It will club up or it will combine the partitions of both the topics and then it will start doing the
+
+assignment.
+
+consumer one will get P zero from topic one.
+
+Then it will go to consumer two.
+
+It will get the P one from topic one.
+
+Then it goes back in a round robin fashion.
+
+Consumer one will get P two from topic one.
+
+consumer two will get P zero from topic two, goes back, consumer one will get P one from topic two.
+
+And finally, consumer two get P two from topic to Round-Robin, you see that consumers most of the times
+
+will get equal partitions
+
+If not, there will be one extra partition for the first consumer.
+
+So it's up to you.
+
+You can decide which assigner to use by default.
+
+It is the range Assigner.
+
+QUES
+Moving the partition ownership from one consumer to another is called Consumer Group Rebalancing
+The group coordinator is the one that does rebalancing false
+If a rebalance happens when some records are processed but not committed which of the following will happen : - Records Processed multiple times (Duplicates)
+If a rebalance happens when records are committed but not yet processed which of the following will happen:- Records not being processed
+Implementation Of consumer Rebalance listner will allow us take action when a rebalance is triggered
+If both FETCH_MIN_BYTES_CONFIG and FETCH_MAX_WAIT_MS_CONFIG are configured whichever value is reached first will be used True
+1/3 is the  recommended fractional value for HEARTBEAT_INTERVAL_MS_CONFIG compared to SESSION_TIMEOUT_MS_CONFIG
+If we want the consumer to start reading from the beginning of the partition that does not have a committed offset , what is the value to be set to AUTO_OFFSET_RESET_CONFIG :- Earliest 
+
+## Create A simple Consumer
+So far, the consumers we have created are all a part of a consumer group, a particular consumer group
+
+wherein the group coordinator will take care of the partition assignment, the partition reassignment,
+
+if a rebalance happens the offset management and all that happens through the consumer group coordinator.
+
+This is good enough for most of the kafka consumer applications, but kafka also allows you to create simple or
+
+standalone consumers that need not be a part of our group, which is very rare.
+
+But in this section, you're going to learn how to create this simple or standalone consumers which
+
+don't belong to a consumer group.
+
+So once you create these consumers, there is no concept of rebalancing, group, coordinator, etc.
+
+Your consumer is responsible for taking care of certain partitions.
+
+So you will have to assign partitions instead of the subscribe method which subscribe to a particular
+
+topic.
+
+You will be using the assign method on the consumer.
+
+Once you create a Kafka consumer, you assign a set of partitions which should be consumed by that consumer.
+
+There is no rebalancing and it's all up to you.
+
+So to get all the partitions on a particular topic, you can invoke consumer dot partitions for method
+
+This will give you all the partitions.
+
+If you want to assign all the partitions belonging to a particular topic to a consumer, you can manually
+
+assign only certain partitions, which I will show you in the next lecture.
+
+You can hardcode the partitions you want this consumer to handle as well.
+
+This is a very rare requirement, but if you have such a requirement where you simply want to create
+
+a single consumer, you don't want it to belong to a group, you don't want to go through the rebalancing.
+
+You will see how to do that in the next few lectures and when you create a simple consumer.
+
+Once you invoke these partitions for method on the consumer, it will return you the current partitions
+
+on the topic once the consumer is running.
+
+If a new partition is created, that will not be available.
+
+You will have to invoke this partition for method again, partitions for methods again.
+
+So you might have to put this inside a loop and keep checking if there are new partitions and then and
+
+reassign those partitions to the consumer.
+
+## Create a Standalone Consumer
+In this lecture, you will learn how to create a simple or standalone consumer to do that, go to the
+
+Order Consumer Project, go to the the very first consumer class under a com bharath kafka order consumer copy it,
+
+paste it on the same package.
+
+Change it to simple consumer.
+
+Simple consumer is the name open the simple consumer, let's move it into a package of its own instead
+
+of order consumers sub package change it to simple consumer.
+
+Hit control one move it to the package of its own double click to maximize we don't need a lot of information
+
+or configuration here, starting from group.
+
+Id take out all the properties.
+
+We don't need the group id now because we are a simple consumer, not a part of any consumer group.
+
+That is the first step.
+
+Next, you create a consumer as usual, and instead of invoking consumer dot subscribe when we are working
+
+with simple consumers.
+
+We do consumer dot assign so hit control d to get rid of that line, invoke consumer dot assign.
+
+This method takes a collection of partitions.
+
+So new array list of partitions.
+
+Select that guy, control one, assign that to a local variable.
+
+Call it partitions, that's fine.
+
+now to fill in this partition is you can do a partitions dot add new topic partition.
+
+Pass in the topic, we are going to use a topic called Simple consumer topic later in the producer will
+
+use this and this topic will be automatically created for us when we run the producer application,
+
+the partition, you can hardcoded it if you know the numbers within a topic which you want to assign to
+
+this simple consumer.
+
+You can do it like this.
+
+You can copy that line if you want to assign one more partition paste that line assign the partition number.
+
+This is one way of doing it.
+
+Or if you want to assign all the partitions on a given topic to this consumer, the easiest way is go
+
+up top.
+
+Invoke consumer dot partitions for method.
+
+This method takes the topic which we have right here, which is a simple consumer topic, and it returns
+
+all the partitions.
+
+That topic has so control
+
+One assigned statement to the new local variable call it Partition infos Partition infos.
+
+So here we get the partition infos back, but here we need a top partition.
+
+So we are going to look through this partition infos and then assign our fill in this partitions
+
+array list.
+
+So right after this array list, you can take out these hardcoded lines.
+
+Start at for loop for partition info info colon
+
+From this partition infos list copy that and paste it right there.
+
+Start off the loop.
+
+Let me get this spelling right here.
+
+It's partition, partition info, each partition info
+
+As we get it, we want to put an object into the partition list partitions, dot add new partition.
+
+New topic, partition is what we want, a new topic, partition, the topic will always remain the same,
+
+which is this guy here, simple consumer topic.
+
+And we get the partition number from the Info info dot partition will give us the partition number.
+
+So by the time this loop finishes, well, we would have assigned all the partitions of this topic.
+
+To this list, and we are passing that list to the consumers assignment method, so the consumer will
+
+be ready to consume messages from all the partitions of this particular topic, the rest of the logic
+
+will remain the same.
+
+How we process the records, the poll method works the same.
+
+## Create a producer to test 
+
+In this lecture, we'll create a simple producer and test the simple consumer to do that, go to the
+
+order producer, go to the very first consumer, our producer we have created under com bharath Kafka
+
+order producer.
+
+Copy that order producer paste it on the same package, call it simple consumer test
+
+Producer , simple consumer test producer.
+
+Open up the new class.
+
+Get rid of all the unwanted configuration, leave it with the three mandatory properties and the only
+
+change that is required here is the topic name.
+
+When we create a producer record, we need to grab the topic name from the consumer so that we use a
+
+separate topic here.
+
+That's it now we can run the producer first and then go run the consumer, or we can run the consumer
+
+first, but for running the consumer, we already need to have a topic.
+
+The consumer won't create a topic if it doesn't exist.
+
+So let's run the producer, which will produce a message.
+
+It has successfully produced a message now go to the consumer before you go ahead and do that, you
+
+need to set one more property.
+
+When we have a consumer group, everything will be taken care of, like the off sets and all that.
+
+But when we are running a standalone consumer, we need to set a property.
+
+I will explain why we need this consumer config dot offset reset.
+
+So when this consumer runs, it doesn't know where it has to start from.
+
+So here I'm going to tell it start from the earliest, otherwise it will start consuming only those
+
+messages that come in after it starts.
+
+So now it will go to the beginning of the topic and it will read all the messages right
+
+Click Run Java application.
+
+The consumer is up.
+
+There we go.
+
+You can see the messages being consumed so you can put this consumer in a while, loop, do whatever
+
+you want.
+
+But we have seen a simple consumer that is not a part of the consumer group which is working.
+
+## Important points to rememer with simple consumer
+In this lecture, I will leave you with a few important things you need to remember while working with
+
+simple consumers.
+
+The poll method gets a batch of records to process them and the auto commit will happen by default.
+
+But if we want to take the offset commits into your hands while working with simple consumers, which
+
+is very rare, we need to set another property.
+
+Let's try to do it without setting the property.
+
+If you say consumer, dot commit sync or async, either of those right after the records are processed,
+
+I'm using
+
+commit dot commit async right
+
+Click run this as java application and you will see an exception.
+
+Let me copy that exception to my text editor so that you can see it better.
+
+It says invalid group ID to use the group management or offset commit APIs, you must provide a valid
+
+group id in the consumer configuration.
+
+So far the offset to use the offset commit APIs.
+
+We should be a part of a Valid group, although we don't want the consumer group having multiple
+
+consumers and all that, we still need to provide the group dot id at least as of August 21, 2021.
+
+That is the way Kafka works.
+
+It has to go through the group coordinator and all that internally.
+
+So we need to set props dot set property, consumer config dot group id config, set it to a unique value,
+
+call it simple consumer group.
+
+So this group has only one consumer right click run Java application and now you will not see any exceptions
+
+if you have data that will be processed, but at least you are not seeing any exceptions.
+
+And if you add your consumer to an existing consumer group, which is already consuming the messages,
+
+you will get a commit exception.
+
+You can't add a simple consumer to a active group which has multiple consumers in it and already is
+
+processing the messages.
+
+But you can use the same consumer group for multiple simple consumers you will not have any exceptions.
+
+All this comes from Kafka documentation, and that might be updated in the future.
+
+But right now, as of August 2021, if you want to take commit into your own hands, which is very rare
+
+when we work with simple consumers, we will have to provide the group id
+
+If not, we will get the exception.
+
+## Steam Processing
+In this lecture, you will learn what real time stream processing is, in big data systems like Hadoop.
+
+The data is first stored in to systems which we refer to as data leaks.
+
+We then use tools that will pull this data, analyze the data and generate reports that can be used
+
+to make business decisions.
+
+We call this entire process as near Real-Time .
+
+We don't call it real time, but we call it near real time because there is a slight time delay between
+
+the data being generated, it being pulled, the analysis being made and the report being generated.
+
+Data streaming, on the other hand, is a continuous flow of business events or data.
+
+Unlike big data, we do not store the data to a data lake or a database.
+
+It is data in motion.
+
+The data stream doesn't have a predetermined beginning or ending.
+
+As the data flows through the streaming applications or the stream processing applications.
+
+These applications can apply computational logic like aggregations, transformations, etc. on this
+
+data and the analytics, or the reports will be generated right away in real time.
+
+And when I introduced you to Kafka in the first few sections, i have showed you were, Kafka can be used.
+
+So data processing also applies to all these use cases.
+
+The real time data processing or real time stream processing applies to all these use cases.
+
+Micro service applications can use the Kafka realtime stream processing, along with other big data tools
+
+like Strom Spark, etc. to analyse the data right away and generate the reports, we can use realtime
+
+stream processing to monitor the trucks, cars, etc. to see that they are on time to their destination.
+
+And if something goes wrong, we can suggest or fix it right away.
+
+Factories can use real time stream processing to analyze the data that comes from Iot devices and make
+
+intelligent decisions realtime stream processing and use it for payment transactions, stock transactions
+
+and more in the financial domain in hospitals,
+
+We can use it to monitor the health of a patient and take intelligent decisions and then in retail hotel
+
+travel.
+
+It can be used for recommendations and more.
+
+There are several other use cases where real time stream processing can be used to make decisions in
+
+real time.
+
+And Kafka makes it super easy for us to create this computational logic as that data flows by giving
+
+us a Kafka streams library, the streams library is divided into processor API
+
+on top of the processor API, we have the streams, DSL domain, specific language streams
+
+DSL is very simple to use and make all the transformations joins, etc. on the data as it flows through
+
+our applications.
+
+For most of the use cases, the streams DSL is good enough, but that is not enough, you can always go
+
+down to the lower level and use the processor API as well.
+
+* kafka-topics --create \
+--bootstrap-server localhost:9092 \
+--replication-factor 1 \
+--partitions 1 \
+--topic streams-dataflow-input
+
+kafka-topics --create \
+--bootstrap-server localhost:9092 \
+--replication-factor 1 \
+--partitions 1 \
+--topic streams-dataflow-output
+
+kafka-console-producer --bootstrap-server localhost:9092 --topic streams-dataflow-input
+
+kafka-console-consumer --bootstrap-server localhost:9092 \
+--topic streams-dataflow-output \
+--property print.key=true \
+--property print.value=true \
+--property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+--property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+
+Word Count Demo:
+
+kafka-topics --create \
+--bootstrap-server localhost:9092 \
+--replication-factor 1 \
+--partitions 1 \
+--topic streams-wordcount-input
+
+kafka-topics --create \
+--bootstrap-server localhost:9092 \
+--replication-factor 1 \
+--partitions 1 \
+--topic streams-wordcount-output
+
+kafka-console-producer --bootstrap-server localhost:9092 --topic streams-wordcount-input
+
+kafka-console-consumer --bootstrap-server localhost:9092 \
+--topic streams-wordcount-output \
+--from-beginning \
+--property print.key=true \
+--property print.value=true \
+--property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+--property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
 
 

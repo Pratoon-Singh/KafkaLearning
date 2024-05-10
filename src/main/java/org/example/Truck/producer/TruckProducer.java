@@ -19,13 +19,14 @@ public class TruckProducer {
 		properties.setProperty("bootstrap.servers","localhost:9092");
 		properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
 		properties.setProperty("value.serializer", TruckSerializer.class.getName());
+		properties.setProperty("partitioner.class", TruckPartioner.class.getName());
 
 		KafkaProducer<Integer , TruckLocation> kafkaProducer = new KafkaProducer<>(properties);
 		TruckLocation truckLocation = new TruckLocation();
 		truckLocation.setId(1);
-		truckLocation.setLatitude("357191 E");
-		truckLocation.setLongitude("873919 N");
-		ProducerRecord<Integer, TruckLocation> geoLocation = new ProducerRecord<Integer, TruckLocation>("TruckCSTracking", truckLocation.getId(),truckLocation);
+		truckLocation.setLatitude("37.2431");
+		truckLocation.setLongitude("115.793");
+		ProducerRecord<Integer, TruckLocation> geoLocation = new ProducerRecord<Integer, TruckLocation>("TruckCSPartion", truckLocation.getId(),truckLocation);
 
 try{
 		Future<RecordMetadata> latitudeSend = kafkaProducer.send(geoLocation);
@@ -40,4 +41,5 @@ try{
 	}
 
 	}
+
 }
