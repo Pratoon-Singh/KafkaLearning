@@ -3527,6 +3527,9 @@ For most of the use cases, the streams DSL is good enough, but that is not enoug
 
 down to the lower level and use the processor API as well.
 
+
+
+
 * kafka-topics --create \
 --bootstrap-server localhost:9092 \
 --replication-factor 1 \
