@@ -1,0 +1,904 @@
+In this and the next few lectures, you'll implement your very first kafka streaming application to
+
+do that, go to the project, go to the source main Java, the package, right
+
+Click, create a new class.
+
+Call it data flow stream.
+
+with a main method finish.
+
+Go to the main method hit control d to delete that line, the very first step is to create a properties
+
+object from Java.
+
+It'll be assigned to a local variable call it props, props dot put.
+
+There are four properties we need to configure.
+
+We have those properties on the streams config class as constant, streams config dot application
+
+Underscore ID is the first configuration.
+
+Every streaming application should have a unique ID.
+
+When we run multiple instances of the same streaming application, they should all have the same Id
+
+within double quotes streams
+
+Hyphen Dataflow is the unique id for this streaming application, props dot put streams config dot
+
+application.
+
+We have the application id.
+
+Next is the bootstrap servers config.
+
+We are aware of what this is.
+
+This is the broker information localhost colon nine zero nine two.
+
+If we have multiple brokers you pass in the host colon
+
+port number pairs comma seperated
+
+We have two more properties to go.
+
+Props dot put streams config dot default key serde class.
+
+This is the default serializer and deserializer
+
+class for the key use the serdes factory class serdes dot string is the type of key we are going to
+
+use.
+
+We are not going to provide any value for it, but by default, let the serializer and deserializer for the key
+
+be a string dot get class dot get name.
+
+We need to do the same for the value as well, props dot put streams config, dot default value
+
+Underscore serdes class Serdes dot string dot get class dot get name.
+
+Get name
+
+So those are the four mandatory properties, the application id every streaming application should have
+
+a unique I.D. within the cluster, then the broker information using the bootstrap servers config,
+
+the default key serializer and deserializer, and the default value serializer and de serializer.
+
+class, as the names of these key says, they are the default and we can override them later in the application.
+
+And I will show you that in lectures later on.
+
+The second and the key step is where we define the computational logic or the stream topology, to do
+
+that, we create an instance of the streams builder class, assign that to a local variable call that
+
+builder.
+
+The streams builder can be looked at as the topology builder builder dot the computational
+
+Logic for this use case is simple.
+
+We read from a topic and process the data which is print the data to the console
+
+So builder dot stream is the method that can be pointed to a topic.
+
+There are several overloaded versions of it.
+
+As you can see, it can take a collection, it can take a string topic, it can take a pattern of the
+
+topic name and so on will use the one that takes the string topic name within the double quotes Streams
+
+hyphen dataflow hyphen input is the topic which we have created control one assign statement to a
+
+local variable.
+
+The stream method on the builder will return back a kafka stream a stream object.
+
+We know that we are going to deal with string data, string keys and string values.
+
+The key will be null.
+
+We are not going to pass that, but the value will be of type string.
+
+Stream, this stream object has various methods that we can use to transform the data for each is the
+
+simplest that we are going to use for now.
+
+And will express a lambda expression which will receive the keys and values in the stream as the records
+
+are read, each of those records from the stream will be handed over to this lambda and we will simply
+
+display them sysout.
+
+sysout within the double quotes key and value plus
+
+The key let me add a space right there after the value, the key that comes in and then the plus within the double quotes
+
+a space plus the value can take out that extra semicolon right there.
+
+So our processing logic here is very simple.
+
+We simply read from a topic using a builder dot stream method as the records are read or streamed, we use the
+
+foreach method on the stream and render them onto the console.
+
+That's the simplest processing logic now that we have the processing logic to create a topology use
+
+builder
+
+Dot, build, The builder dot build method returns a topology object assigned to a local variable call that topology
+
+So now we have the properties and we also have the topology.
+
+In this lecture will execute the third and fourth steps, which are to start a stream and to stop a
+
+stream, for that we need a streams client object, which is Kafka streams, create a new Kafka
+
+streams, which takes the topology and the properties which we have created in the previous lectures,
+
+control one.
+
+Assign that to a local variable, call it streams on this stream instance or streams instance.
+
+kafka streams instance.
+
+We invoke the start method that will start the stream.
+
+Now, if you run your program, it will keep running and it will start consuming the data from this topic
+
+and it will use this foreach to dump all the data onto the console as per the topology or computational
+
+logic.
+
+But it will not stop until we hit the stop button.
+
+Let me show you right click Run as Java application and our stream has started.
+
+You see this red button
+
+That means this program is running in a loop.
+
+And if you want to stop it, you have to hit this red button that is our stream works now to close the
+
+stream.
+
+If you point your cursor here on the streams variable it says resource leak streams is never closed.
+
+The best place to close it is whenever we hit that stop button, whenever the main program ends, that
+
+is when we want to close the stream.
+
+For that, we need to access the current process.
+
+This program's runtime and add a shutdown hook to it.
+
+So use the runtime class from Java lang dot get runtime that will give us a current runtime add a shutdown
+
+hook to it.
+
+Add a Shut down hook is the method and here we can pass in a new thread so create a new thread.
+
+Within brackets use the supercool syntax of Java eight, the streams object, which we have streams,
+
+colon, colon, close is what should be executed within this thread with a single line
+
+We are shutting down or closing the stream whenever this process when the where the stream is running
+
+ends.
+
+So that is how to start a stream and closer stream.
+In this lecture, we will test our streaming application to do that right click start the streaming
+
+app by running it as a java application.
+
+It is up and running now
+
+Go to the commands file, which you would have downloaded.
+
+See this Kafka console producer will produce the messages on to the streams dataflow input topic by
+
+using this command from the command line.
+
+So copy that.
+
+Open up a new command line window paste it enter and you can start typing in whatever data you want to
+
+send so Kafka streams is easy and awesome.
+
+Enter now go to your stream console in your ide, and you should see that on the console so our stream
+
+processing and the computational logic is working as expected and you can see that the value is kafka
+
+stream is
+
+easy and awesome, but the key is null because we are not setting any key and you can keep typing
+
+in.
+
+We will explore more in the next few enter you will see that as well on the console.
+
+In this lecture, you will learn how to see or inspect the topology before you run your stream, that
+
+is, if you want to ensure that your computational logic is OK.
+
+It is super simple to do that comment out the streams dot start, because typically will do this inspection
+
+before we start off the stream and stop the stream right here.
+
+Use a
+
+Sysout. Topology Object or class has a method called DESCRIBE which will return the description of the specified
+
+topology.
+
+Stop the streaming application if it is running right, click, run it as a java application and on the
+
+console you will see the entire topology described
+
+Let me copy that to a text editor paste it.
+
+It says Topologies and sub topology.
+
+No, there are two nodes here.
+
+The source node and the processor node.
+
+The source node is the key stream source.
+
+It reads our streams
+
+Data from this streams data flow input topic.
+
+And we have a processor node which is a case stream for each.
+
+And these arrows indicates how the data flows, the data flows from this source node as the data is
+
+read from this topic, it goes to the foreach processor node, which is right here.
+
+And from there, where does it go
+
+It goes to none.
+
+But where does it get the data from?
+
+It gets from this source.
+
+So these arrows indicate the data flow, the for each transformation method
+
+If you point cursor on the for each right here, it doesn't return back anything.
+
+It returns a void
+
+These transformation methods which return a void are called sync methods or terminating transformations
+
+in lectures.
+
+Later on, we will see map mapped by values, etc., which return another case stream object and the flow
+
+will go on and on.
+
+Visually, this is how it can be looked at.
+
+So the source processor consumes the data from a topic and that data flows as a stream to the for each
+
+processor.
+
+Now, go back.
+
+Now that we are convinced that our streaming computational logic is OK, let's uncomment
+
+This back earlier when you ran the stream didn't start.
+
+It simply gave you the description.
+
+As you can see, there is no stop button, etc..
+
+Now, if you run this, you will both see the description on the console and your stream will be up and
+
+running.
+
+There we go.
+
+So if you want to send some messages to the topic, you are welcome to do that.
+
+In this lecture, we will complete the data flow use case by writing the stream to a output topic, to
+
+do that, go to the line just before we build the topology, use the stream that we got from the input
+
+source, which reads from a topic stream
+
+dot two is the method that takes a topic and writes the stream of records to the topic.
+
+It's that simple.
+
+And the topic is streams hyphen data flow, hyphen output.
+
+This is the topic which we already have created.
+
+Point your cursor on the two method read the documentation materializes this stream to a topic using the
+
+default serializer specified in the configuration which we have specified
+
+uptop and producers default partitioner reduces the producer's default partitioner to the specified topic
+
+should be manually created before it is used.
+
+That is, before the Kafka streaming application is started.
+
+So we are have all that in place stop the streaming application.
+
+If it is running right click.
+
+Run as Java application that will print the new topology onto the console will come back to that.
+
+Let's test it first.
+
+Go to the commands file.
+
+Make sure you have the console producer running from our previous test, if not, you can copy that
+
+command and run it in a command line, copy this second command, which is to launch a Kafka console
+
+consumer.
+
+We point it to the broker and then the topic.
+
+And there are four properties to print the key true, print the value on the console through and two
+
+more properties for the deserializers
+
+We are using this string deserializers
+
+Copy that command.
+
+Open up a new command line, window paste it.
+
+Make sure you also have the producer console producer running.
+
+Now run the consumer as well.
+
+The consumer is up and running.
+
+The stream is up.
+
+Go to the producer, say data flow complete enter go to the consumer.
+
+You see the key is null and the value is dataflow complete.
+
+So Our streaming application has read from one topic and it is writing to another topic thanks to the topology
+
+we have.
+
+Let's take a look at that computational logic or the topology.
+
+Copy it from this console.
+
+Now, it would have updated the topology as per the new computational logic we have added.
+
+So let me grab that.
+
+Take it to a text pad.
+
+Paste it.
+
+topologies sub topologies are zero, it has three nodes, as you can see now, earlier it was just
+
+this source and this processor.
+
+Now we have another sync node because it is writing data to a output topic.
+
+If you point your cursor on this two method, just like the foreach, it is also a void method
+
+Methods like map map by which you will see later on written another key stream object.
+
+But these methods for each and to
+
+Are sync method's, they are done, they are terminating methods, they are done with their work.
+
+so source now, as you can see, is writing to two nodes.
+
+One is the for each node and it is also writing to the sync node which is this guy, zero zero two zero
+
+zero one is the for each zero zero zero is the source and the source.
+
+Once we read it from this input, that stream is flowing to you can see the arrows to these two nodes
+
+the processor nodes and sync node
+
+And these arrows, as you can see, they point to where the data is flowing from and where the data
+
+is going to right here.
+
+So this guy, the Third node is responsible for sending the data to this output topic.
+
+In this lecture, you will learn how to use the case stream classes, filter and map methods to do that,
+
+go to the line just before we write the output to a topic use Stream dot filter.
+
+This method takes a predicate.
+
+It filters out the records based on the predicate and it returns a new stream which has only the filtered
+
+records or events or messages filter.
+
+This predicate receives a key comma value and we can base our filtering logic based on the key or value
+
+or both
+
+The logic here is very simple.
+
+If value dot contains a substring called Token, then make it a part of the resulting stream or the filtered
+
+stream control one.
+
+Assign this to a local variable call it Filtered Stream, now to send the events on this stream to the
+
+output.
+
+We invoke the two method on the filtered stream so only the filtered records will make it to the output.
+
+Right
+
+Click run
+
+Stop your streaming application.
+
+If it is already running, run it again.
+
+Once it is up, go to the console producer, produce some records, say filter works only with token
+
+enter go check the output.
+
+You see, that filter works only with token, made it to the output topic.
+
+Now go back.
+
+Filter does not work.
+
+enter if you see, it won't make it to the output topic because it doesn't have a token substring in it.
+
+So that is how you can use the filter method available on the case stream.
+
+This guy returns a new stream to make it much more readable.
+
+We don't have to assign it to a new variable like this.
+
+You can take out that entire portion and you can delete this filtered stream, take that dot to to the
+
+previous line.
+
+Just take out the semicolon.
+
+So the filter method returns a case stream object on that.
+
+We directly invoke the two.
+
+We are changing the method calls and that makes it much more readable.
+
+In this lecture, we learn how to use the map methods to do that, go right after filter use dot map
+
+values, there are different map methods that are available and overloaded versions as well.
+
+We'll explore some of them.
+
+Map values is a method that will transform the value into a completely different value, depending on
+
+the value mapper logic we implement.
+
+So the map values
+
+receives a value mapper, which is a functional interface with a single method which receives a value so express it
+
+as a lambda.
+
+The transformation logic is super simple.
+
+I want to convert it to uppercase, that's it.
+
+And return that back.
+
+So the new records in the stream will have the values convert it to Capital Key.
+
+Stop the stream if it is running.
+
+Run it again.
+
+Go to the console producer.
+
+And also make sure you have the consumer produce some data map method,with token and the consumer
+
+should have everything in capital.
+
+That is how you can transform your values in the records.
+
+Here it is a very simple string value which is being converted to uppercase.
+
+The logic can be as sophisticated as you want to.
+
+Let me comment this out, instead of transforming it like this, we can also use dot map method, which
+
+receives a key value mapper.
+
+This guy, again, is a functional interface.
+
+We can express it as a lambda function.
+
+The method in it receives the key and value and you can transform both of them.
+
+So you can write a lot of logic and at the end of it you can create a new key value.
+
+So a new key value can be returned.
+
+In this case, I'm simply returning the key as it is and the value will be value dot to uppercase
+
+again.
+
+The very same previous logic, but in a slightly different fashion.
+
+Stop, run, ensure that it still works as expected, go back, produce another message.
+
+Using the map with key and a value token, as long as it has a token, it will be filtered, go check
+
+the out, but it is still converted to uppercase.
+
+But this time we have used the map method which receives both key and value.
+
+We can transform the key if you want to.
+
+Let me show you one more trick here.
+
+which is not that popular instead of value.
+
+If you use, instead of key, if you use value here now, your key right now, it is null because
+
+we are not setting any key when the messages are produced.
+
+But now you will see that the value itself will become the key.
+
+Let's check that out.
+
+Stop.
+
+Start again, go back.
+
+Map that converts the key or transforms the key was null now it should have something at the end i add
+
+token go back to the consumer.
+
+Check out this time instead of a Null key you have the entire value as the key in lower case.
+
+And the value got converted to uppercase just to demonstrate that you can transform the keys as well.
+
+Whatever you return from here, the new object key value will become the key and value for the record
+
+in the stream.
+
+So if you hardcoded to some value, that will be the key for all the records.
+
+Another way of doing this very same thing, instead of creating a new key value, this key value has
+
+a method called key value dot pair.
+
+And whatever you return back the spare method returns an instance of the key and value.
+
+So you don't have to be surprised if you see this syntax being used instead of new here.
+
+I want value dot to uppercase.
+
+That will still work.
+
+Go ahead and test it.
+
+Let me take out the extra brackets at the end.
+
+There we go.
+
+So in this lecture, you have learned how to use the math values, which only transforms the values
+
+and returns a stream with the new set of records in it, with the transformed value and the map method
+
+that returns or that receives both key and value.
+
+And we can transform both the keys and values and the resulting records
+
+Will have the new transformed keys and values.
+
+
+As you work on the word count use case, along with the flat map values and group by transformational
+
+methods, we'll be using aggregate functions like count and this count function returns
+
+A k table in this lecture,
+
+I'll briefly walk you through what a Ktable is.
+
+A Ktable is a representation of updates stream or a change log.
+
+As the records flow through the stream, it maintains the updates for the records with the same key.
+
+It is a stateful component.
+
+That is, the table is stored in a local store that is created automatically.
+
+The advantage of having the state maintained is as the records flow through the stream.
+
+In our case, the word count use case, we need the count of the words from the previous messages and
+
+that will be stored in a Ktable thanks to this local state.
+
+When the next message arrives, we increment the values for the words that came in the earlier messages
+
+as well.
+
+We don't have to do all that.
+
+The Ktable will maintain the state for us.
+
+For example, in the very first message that came in, if we have ten apples, 20 bananas and five oranges
+
+and three pineapples.
+
+This will be the K table that will be returned by the count method, and when the second message comes
+
+in, if it has five more apples in it, five bananas, no oranges and three more pineapples that came
+
+in the second message, then this is how the K table updated K table will look like the keys will be taken
+
+and their values will be incremented.
+
+It is a absurd operation.
+
+Meaning update or insert, if the key is not there, then it'll be a insert.
+
+If the key is there, then it'll be updated.
+
+take the key, change the value.
+
+Put it back do a update, although we don't use delete in this case, if you want to delete a particular
+
+key.
+
+Then you pass in a key with a null value, then the key will be completely deleted.
+
+That record will be completely deleted from the k table.
+
+So that is how internally the k table magic happens behind the scenes when you simply invoke the
+
+count method in the next few lectures, as you will see.
+
+
+In this lecture, we will implement the word count use case to do that.
+
+Copy the data flow stream paste it on the same package, change the name to word count stream, open up
+
+the word count stream.
+
+The very first step remains the same, which is to configure the properties, will add an additional
+
+property later on before we test our stream.
+
+Second step is to create the topology builder.
+
+Then we use that builder to create a stream which points to the input topic, which in this case is
+
+streams, hyphen, word, count, hyphen, input.
+
+Take out the rest of the computational logic or the topology.
+
+We're going to create it from scratch.
+
+The other steps remain the same.
+
+We create a topology using this builder pass that topology and the properties to kafka streams to create
+
+a Kafka streams object or the kafka client streams client object.
+
+Invoke the start method to start the stream and we stop the stream at the end.
+
+What differs is this topology or the computational logic from stream to stream application.
+
+The Stream dot the very first step is to take the incoming message, which will have several words,
+
+and convert it into something like this.
+
+So each word should become a record in the stream.
+
+The key will be null and each word within the sentence that comes in will become the value so that we
+
+can then apply some aggregations on it and get the count of each word as the stream keeps flowing.
+
+So to achieve this from this, the method we'll be using is flat map.
+
+And unlike map method, the map method returns only one record back, but the flat map method
+
+can return multiple records back.
+
+So here when we use a flat map.
+
+Either we can use flat map or flat map values because here we are only dealing with values so we can
+
+use flat map values.
+
+This guy takes a mapper and this mapper receives a value so we can express it as a lambda function value.
+
+What is expected back a list of values.
+
+So array's dot.
+
+As list, and within this, we use value, convert this value completely to lowercase instead of having
+
+the casing problems, one Apple as capital, one Apple as lower and the count is messed up will first
+
+convert everything to lower case.
+
+Then we split it.
+
+What regular expression?
+
+Just by spacing.
+
+So now this line here, as this message comes in, will be split into multiple records and that will
+
+be handed over back as this stream.
+
+All that magic is happening here within this flat maps.
+
+Whatever list we return back, the values within those list will be used to create new records like
+
+this.
+
+That's the magic of flat map value.
+
+So that is the first step.
+
+And in the next few lectures will implement the rest of the logic, which is very simple.
+
+If we look at this as a sequel table to get the count of each word within this, this is how we will
+
+write a sql query select count of value from the stream group by the value that will give us the
+
+count of each value.
+
+It is a little tricky to apply count and group by in our streaming API, as you will see.
+
+So on this stream we can apply the group by method.
+
+So I go here to the next line dot group by the group, by, as you can see, only uses the key.
+
+It only supports grouping by the key.
+
+But in our case the key is null.
+
+But luckily, this group by takes a Mapper, which, again, can be expressed as a lambda expression, so
+
+it takes it gives us both the key and value and whatever we return back from here, that will be used
+
+as the key in the resulting stream.
+
+So the trick here is to use our values as the key, the resulting stream where the group by happens will
+
+have this value as the key and the value also will be key.
+
+So it's a little tricky, but here we simply tell the group by go ahead and use the value, whatever
+
+this Mapper returns on that the group by will start grouping since the key is null.
+
+We are working around it by setting this as the
+
+Key on the resulting stream, there are two things happening here, the group by will use this value to
+
+group by and also on the stream that comes out of this group by, this will be the key.
+
+The values will be the key.
+
+Hit control one at this point on the stream, assign this to a local variable to see what comes out
+
+of this.
+
+So it is a Kafka grouped stream.
+
+It is not a regular stream.
+
+It is a Kafka grouped stream.
+
+You cannot do a lot of things here like you do on K Stream.
+
+You can't use all those methods like MAP, etc. All you can do here is apply aggregation formulas.
+
+In our case, the aggregation is simply the count method.
+
+The count method returns back a Ktable back.
+
+This will have internal state.
+
+So as the stream keeps flowing, as the messages come in, as the group by happens, as the K table is created,
+
+that Ktable will be maintained in memory.
+
+So as apples and bananas come in in the future messages, the counts will just be updated thanks to
+
+the ktables internal state and the return type.
+
+As you can see is a string and long.
+
+Let's call this counts table.
+
+Now, on this, counts table, you cannot directly send this to a topic, you have to convert it to a stream
+
+first, and on that we invoke the do method, give it a topic, name the topic.
+
+Name is streams hyphen.
+
+Word count, hyphen output.
+
+And one other thing to keep in mind here is by default, the serializers and deserializers , we have configured
+
+both for the key and value are of type string, and that is OK for the incoming data because it is string data.
+
+But here you can see that the Ktable has data of type string and long.
+
+So this is where we override the defaults and we do that using
+
+An extra parameter, these two method takes an additional parameter, which is produced dot with.
+
+So if you hit control space on this to method, you can see the overloaded versions which take
+
+This produced where we can pass in the serdes that should be used, the serializers and the deserializers that should
+
+be used in this case, it is Serdes dot string.
+
+Is the first one and the second one is Serdes dot long.
+
+We don't have to invoke the getclass dot get name.
+
+You simply give it the class type and it works.
+
+So it's that simple to change the default because here the Ktable returns string and long
+
+That is what we want to serialize when it goes to the topic.
+
+So we use serdes string and serdes long that completes the use case for us.
+
+So let me recap what we have done so far.
+
+First, we have started by taking the input string as it comes in the record.
+
+Then we have split it into multiple words.
+
+The new stream will have keys as null and each word in the sentence becomes a value.
+
+And that will be the new stream on that stream.
+
+We want to apply something like this where we group by and count, but the group by in kafka Streams
+
+works only on the Keys.
+
+So to trick it or Work around it that we pass in a mapper which receives the key and value.
+
+And whatever this mapper returns back, that is what the group by uses to group.
+
+In this case, we are using the value to group and on the resulting stream this value will become the
+
+key.
+
+So value also will be the same.
+
+But instead of a null key when it is group, it will have this as the key.
+
+And on that, all we can do, as you have seen on the k streams, or the K group stream grouped stream.
+
+You can only use the aggregate function.
+
+That is what you did.
+
+You got the Ktable back and you are streaming that table by using to stream to string do this output topic.
+
+And in the process you have learned that we have to override this default streams, especially this
+
+guy here.
+
+So that the value when it is serialized, we have it as the long type
